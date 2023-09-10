@@ -19,6 +19,10 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import java.awt.Color;
+import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 
 
 public class salesdata extends JFrame {
@@ -27,6 +31,7 @@ public class salesdata extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JButton btnNewButton;
+	private JLabel lblNewLabel;
 
 	/**
 	 * Launch the application.
@@ -50,7 +55,9 @@ public class salesdata extends JFrame {
 	public salesdata(String username) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1363, 725);
+		setExtendedState(MAXIMIZED_BOTH);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(222, 223, 162));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -60,9 +67,12 @@ public class salesdata extends JFrame {
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setBounds(105, 106, 795, 480);
+		scrollPane.setBackground(new Color(255, 255, 255));;
 		contentPane.add(scrollPane);
 		
 		table = new JTable();
+		table.setOpaque(false);
+		table.setBackground(new Color(222, 223, 162));
 		table.setShowGrid(false);
 		table.setShowVerticalLines(false);
 		table.setShowHorizontalLines(false);
@@ -115,18 +125,25 @@ public class salesdata extends JFrame {
 			}
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButton.setBounds(395, 616, 153, 34);
+		btnNewButton.setBounds(413, 597, 153, 34);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("BACK");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new adminoptions(username).setVisible(true);
+				setVisible(false);
 			}
 		});
 		btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnNewButton_1.setBounds(947, 35, 132, 44);
 		contentPane.add(btnNewButton_1);
+		
+		lblNewLabel = new JLabel("SALES HISTORY");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 25));
+		lblNewLabel.setBounds(392, 35, 314, 34);
+		contentPane.add(lblNewLabel);
 		
 		DefaultTableModel model = (DefaultTableModel)table.getModel();
 		try

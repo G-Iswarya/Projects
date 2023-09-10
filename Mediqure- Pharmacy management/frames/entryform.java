@@ -24,7 +24,10 @@ import java.sql.Statement;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.Cursor;
+
 import javax.swing.SwingConstants;
+import javax.swing.JCheckBox;
 
 public class entryform extends JFrame {
 
@@ -61,6 +64,25 @@ public class entryform extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		JCheckBox showpwdchkbox = new JCheckBox("Show password");
+		showpwdchkbox.setForeground(new Color(255, 255, 255));
+		showpwdchkbox.setBackground(new Color(64, 64, 64));
+		showpwdchkbox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (showpwdchkbox.isSelected()) 
+				{
+					passwordField.setEchoChar((char)0);
+				} 
+				else 
+				{
+					passwordField.setEchoChar('*');
+				}
+			}
+		});
+		showpwdchkbox.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		showpwdchkbox.setBounds(1030, 442, 147, 23);
+		contentPane.add(showpwdchkbox);
+		
 		JLabel lblNewLabel_2 = new JLabel("MEDIQURE");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 32));
@@ -74,8 +96,9 @@ public class entryform extends JFrame {
 		contentPane.add(pharmacygblabel);
 		
 		JLabel login = new JLabel("LOGIN");
+		login.setHorizontalAlignment(SwingConstants.CENTER);
 		login.setForeground(new Color(255, 255, 255));
-		login.setBounds(628, 287, 98, 31);
+		login.setBounds(659, 287, 98, 31);
 		login.setFont(new Font("Tahoma", Font.BOLD, 18));
 		contentPane.add(login);
 		
@@ -105,7 +128,7 @@ public class entryform extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String uname=usernamefield.getText();
 				String pword=passwordField.getText();
-				if(usernamefield.getText().equals("admin") && passwordField.getText().equals("admin"))
+				if(usernamefield.getText().replaceAll("\\s+","").equals("admin") && passwordField.getText().replaceAll("\\s+","").equals("admin"))
 				{
 					setVisible(false);
 					new adminoptions(uname).setVisible(true);

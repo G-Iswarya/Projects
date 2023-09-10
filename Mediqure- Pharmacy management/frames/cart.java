@@ -1,4 +1,7 @@
 package frames;
+import java.text.*;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -42,7 +45,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
+import java.text.SimpleDateFormat;
 public class cart extends JFrame {
 	static int billID=102;
 	private JPanel contentPane;
@@ -60,6 +63,11 @@ public class cart extends JFrame {
 	private JTable carttable;
 	private JButton btnNewButton;
 	private JTextField totalprice;
+	ArrayList <String> alname = new ArrayList<String>();
+	ArrayList <Integer> alcost = new ArrayList<Integer>();
+	ArrayList <Integer> alquant = new ArrayList<Integer>();
+	ArrayList <Integer> altot = new ArrayList<Integer>();
+	
 
 	/**
 	 * Launch the application.
@@ -84,7 +92,7 @@ public class cart extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1552, 732);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(128, 128, 128));
+		contentPane.setBackground(new Color(222, 223, 162));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setExtendedState(MAXIMIZED_BOTH);
 
@@ -193,6 +201,7 @@ public class cart extends JFrame {
 		textField.setColumns(10);
 		
 		lblNewLabel = new JLabel("Medicine name");
+		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel.setBounds(614, 38, 183, 34);
 		contentPane.add(lblNewLabel);
@@ -204,11 +213,13 @@ public class cart extends JFrame {
 		medname.setColumns(10);
 		
 		lblQuantity = new JLabel("Quantity");
+		lblQuantity.setForeground(new Color(0, 0, 0));
 		lblQuantity.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblQuantity.setBounds(915, 38, 183, 34);
 		contentPane.add(lblQuantity);
 		
 		lblCostPerUnit = new JLabel("Cost per unit");
+		lblCostPerUnit.setForeground(new Color(0, 0, 0));
 		lblCostPerUnit.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblCostPerUnit.setBounds(614, 122, 183, 34);
 		contentPane.add(lblCostPerUnit);
@@ -220,6 +231,7 @@ public class cart extends JFrame {
 		contentPane.add(cost);
 		
 		lblTotalPrice = new JLabel("Total Price");
+		lblTotalPrice.setForeground(new Color(0, 0, 0));
 		lblTotalPrice.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblTotalPrice.setBounds(915, 121, 183, 34);
 		contentPane.add(lblTotalPrice);
@@ -233,6 +245,7 @@ public class cart extends JFrame {
 		contentPane.add(total);
 		
 		lblNewLabel_1 = new JLabel("Search");
+		lblNewLabel_1.setForeground(new Color(0, 0, 0));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel_1.setBounds(49, 45, 88, 34);
@@ -387,6 +400,7 @@ public class cart extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new pharmaoptions(username).setVisible(true);
+				setVisible(false);
 			}
 		});
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -394,6 +408,7 @@ public class cart extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JLabel lblNewLabel_2 = new JLabel("TOTAL");
+		lblNewLabel_2.setForeground(new Color(0, 0, 0));
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNewLabel_2.setBounds(1009, 506, 105, 34);
@@ -413,29 +428,49 @@ public class cart extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try
 				{
+					int val= JOptionPane.showConfirmDialog(null, "Do you want to confirm your order?", "Place order",JOptionPane.YES_NO_OPTION);
+					if(val == JOptionPane.YES_OPTION)
+					{
 					Connection con = jdbc.getCon();
 					Statement st = con.createStatement();
-					st.executeUpdate(" update medicine set Quantity=Quantity-(select quantity from cart where medicine.MedicineName=cart.medicinename);");
+					DefaultTableModel model = (DefaultTableModel)carttable.getModel();
+					for(int i=0;i<model.getRowCount();i++)
+					{
+						int q = Integer.parseInt(carttable.getValueAt(i, 2).toString());
+						String mn = carttable.getValueAt(i, 0).toString();
+						st.executeUpdate(" update medicine set Quantity=Quantity- '"+q+"' where MedicineName='"+mn+"';");
+					}
+					
+					//st.executeUpdate(" update medicine set Quantity=Quantity-(select quantity from cart where medicine.MedicineName=cart.medicinename);");
 					ResultSet rs = st.executeQuery("select * from cart;");
 					while(rs.next())
 					{
 						 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
-						 Date date = new Date();   
+						 Date date = new Date();
+						 alname.add(rs.getString("medicinename"));
+						 alcost.add(rs.getInt("costperunit"));
+						 alquant.add(rs.getInt("quantity"));
+						 altot.add(rs.getInt("total"));
 						Statement st1 = con.createStatement();
 						st1.executeUpdate("insert into saleshistory(billID, time, medicinename, costperunit, quantity, total) values('"+billID+"','"+formatter.format(date)+"','"+rs.getString("medicinename")+"','"+rs.getString("costperunit")+"', '"+rs.getString("quantity")+"','"+rs.getString("total")+"');");
 						Statement st2 = con.createStatement();
 						st2.executeUpdate("delete from cart;");
 					}
 					billID++;
+					}
+					JOptionPane.showMessageDialog(null, "Order placed successfully. Kindly view receipt");
+					
 				}
 				catch(Exception e1)
 				{
 					JOptionPane.showMessageDialog(null, e1);
 				}
+				
+				
 			}
 		});
 		placeorder.setFont(new Font("Tahoma", Font.BOLD, 14));
-		placeorder.setBounds(982, 600, 149, 48);
+		placeorder.setBounds(915, 600, 149, 48);
 		contentPane.add(placeorder);
 		
 		
@@ -516,10 +551,23 @@ public class cart extends JFrame {
 		contentPane.add(deletebtn);
 		
 		JLabel lblNewLabel_3 = new JLabel("Update quantity");
+		lblNewLabel_3.setForeground(new Color(0, 0, 0));
 		lblNewLabel_3.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel_3.setBounds(810, 504, 136, 31);
 		contentPane.add(lblNewLabel_3);
+		
+		JButton btnReceipt = new JButton("RECEIPT");
+		btnReceipt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+				 Date date = new Date();
+				new bill(billID, formatter.format(date),alname, alcost, alquant, altot, Integer.parseInt(totalprice.getText())).setVisible(true);
+			}
+		});
+		btnReceipt.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnReceipt.setBounds(1093, 600, 149, 48);
+		contentPane.add(btnReceipt);
 		
 		
 		

@@ -20,6 +20,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
+import java.awt.Color;
+import javax.swing.JCheckBox;
 
 public class changePwd extends JFrame {
 	public String pwdpattern = "^(?=.*[0-9])" + "(?=.*[a-z])(?=.*[A-Z])" + "(?=.*[@#$%^&+=])" + "(?=\\S+$).{6,20}$";
@@ -58,11 +61,13 @@ public class changePwd extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("CURRENT PASSWORD");
+		lblNewLabel.setForeground(new Color(255, 255, 255));
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel.setBounds(130, 213, 168, 49);
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblNewPassword = new JLabel("NEW PASSWORD");
+		lblNewPassword.setForeground(new Color(255, 255, 255));
 		lblNewPassword.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewPassword.setBounds(130, 310, 168, 49);
 		contentPane.add(lblNewPassword);
@@ -76,6 +81,7 @@ public class changePwd extends JFrame {
 		contentPane.add(passwordField_1);
 		
 		JButton btnNewButton = new JButton("SAVE");
+		btnNewButton.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\SAVEICON.png"));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -127,6 +133,7 @@ public class changePwd extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("BACK");
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\backicon.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(un.equals("admin"))
@@ -142,8 +149,32 @@ public class changePwd extends JFrame {
 			}
 		});
 		btnNewButton_1.setFont(new Font("Arial Black", Font.BOLD, 14));
-		btnNewButton_1.setBounds(774, 60, 129, 49);
+		btnNewButton_1.setBounds(788, 60, 156, 60);
 		contentPane.add(btnNewButton_1);
+		
+		JCheckBox showpwdchkbox_1 = new JCheckBox("Show password");
+		showpwdchkbox_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (showpwdchkbox_1.isSelected()) 
+				{
+					passwordField.setEchoChar((char)0);
+					passwordField_1.setEchoChar((char)0);
+				} 
+				else 
+				{
+					passwordField.setEchoChar('*');
+					passwordField_1.setEchoChar('*');
+				}
+			}
+		});
+		showpwdchkbox_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		showpwdchkbox_1.setBounds(764, 223, 146, 30);
+		contentPane.add(showpwdchkbox_1);
+		
+		JLabel lblNewLabel_1 = new JLabel("");
+		lblNewLabel_1.setIcon(new ImageIcon(changePwd.class.getResource("/images/Reporting on our Progress and ilestones (1).jpg")));
+		lblNewLabel_1.setBounds(0, 0, 1278, 643);
+		contentPane.add(lblNewLabel_1);
 		
 		
 	}

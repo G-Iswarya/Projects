@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.JSeparator;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -22,6 +23,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,6 +36,9 @@ import javax.swing.table.DefaultTableModel;
 import db.jdbc;
 
 import javax.swing.border.MatteBorder;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class supplierinfo extends JFrame {
 	public int checkuname;
@@ -50,8 +55,8 @@ public class supplierinfo extends JFrame {
 	private JTextField supmobile;
 	private JTextField supmedname;
 	private JTextField supemail;
-	private JTextField supunamesearchtext;
 	private JTextField sup_uname;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -85,17 +90,16 @@ public class supplierinfo extends JFrame {
 		contentPane.setLayout(null);
 		
 		
-		
+		UIManager.put("TabbedPane.contentOpaque", Boolean.FALSE);
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(214, 11, 1040, 628);
+		tabbedPane.setBounds(214, 11, 1040, 639);
+		tabbedPane.setBackground(new Color(0,0,8,12));
+		tabbedPane.setOpaque(false);
+		tabbedPane.setFocusable(false);
 		contentPane.add(tabbedPane);
 		
-		JPanel panel1 = new JPanel();
-		tabbedPane.addTab("ADD", null, panel1, null);
-		panel1.setBackground(new Color(255, 255, 255));
-		panel1.setLayout(null);
-		
 		JButton btnNewButton_1 = new JButton("VIEW ");
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\viewicon.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -124,6 +128,7 @@ public class supplierinfo extends JFrame {
 		contentPane.add(btnNewButton_1);
 		
 		JButton btnNewButton_1_2 = new JButton("ADD");
+		btnNewButton_1_2.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\add-post.png"));
 		btnNewButton_1_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				tabbedPane.setSelectedIndex(0);
@@ -134,11 +139,18 @@ public class supplierinfo extends JFrame {
 		btnNewButton_1_2.setBounds(53, 162, 137, 54);
 		contentPane.add(btnNewButton_1_2);
 		
+		JPanel panel1 = new JPanel();
+		panel1.setForeground(new Color(254, 250, 203));
+		tabbedPane.addTab("ADD", null, panel1, null);
+		panel1.setBackground(new Color(0, 0, 0,100));
+		panel1.setLayout(null);
+		
 		JLabel unamevalid = new JLabel("");
-		unamevalid.setBounds(482, 410, 99, 50);
+		unamevalid.setBounds(873, 335, 99, 50);
 		panel1.add(unamevalid);
 		
 		JLabel lblUsername = new JLabel("USERNAME");
+		lblUsername.setForeground(new Color(254, 250, 203));
 		lblUsername.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblUsername.setBounds(482, 310, 149, 25);
 		panel1.add(lblUsername);
@@ -184,6 +196,7 @@ public class supplierinfo extends JFrame {
 		panel1.add(sup_uname);
 		
 		JLabel lblAddSupplier = new JLabel("ADD SUPPLIER");
+		lblAddSupplier.setForeground(new Color(254, 250, 203));
 		lblAddSupplier.setBounds(124, 24, 689, 64);
 		lblAddSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAddSupplier.setFont(new Font("Tahoma", Font.BOLD, 30));
@@ -202,6 +215,7 @@ public class supplierinfo extends JFrame {
 		panel1.add(separator_2);
 		
 		JLabel namee = new JLabel("NAME");
+		namee.setForeground(new Color(254, 250, 203));
 		namee.setBounds(29, 111, 83, 25);
 		namee.setFont(new Font("Tahoma", Font.BOLD, 14));
 		panel1.add(namee);
@@ -212,14 +226,16 @@ public class supplierinfo extends JFrame {
 		panel1.add(sup_name);
 		
 		JLabel mobilegiven = new JLabel("MOBILE NUMBER");
+		mobilegiven.setForeground(new Color(254, 250, 203));
 		mobilegiven.setBounds(29, 211, 149, 25);
 		mobilegiven.setFont(new Font("Tahoma", Font.BOLD, 14));
 		panel1.add(mobilegiven);
 		
-		JLabel email = new JLabel("EMAIL");
-		email.setBounds(482, 111, 149, 25);
-		email.setFont(new Font("Tahoma", Font.BOLD, 14));
-		panel1.add(email);
+		JLabel email_1 = new JLabel("EMAIL");
+		email_1.setForeground(new Color(254, 250, 203));
+		email_1.setBounds(482, 111, 149, 25);
+		email_1.setFont(new Font("Tahoma", Font.BOLD, 14));
+		panel1.add(email_1);
 		
 		sup_email = new JTextField();
 		sup_email.setBounds(482, 144, 378, 37);
@@ -232,14 +248,15 @@ public class supplierinfo extends JFrame {
 		panel1.add(sup_mob);
 		
 		JButton btnNewButton = new JButton("SAVE");
+		btnNewButton.setBackground(new Color(222, 220, 133));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String name = sup_name.getText();
-				String mobile = sup_mob.getText();
-				String email = sup_email.getText();
-				String medname = sup_medname.getText().toUpperCase();
-				String medID = sup_medID.getText();
-				String supuname = sup_uname.getText();
+				String name = sup_name.getText().replaceAll("\\s+","");
+				String mobile = sup_mob.getText().replaceAll("\\s+","");
+				String email = sup_email.getText().replaceAll("\\s+","");
+				String medname = sup_medname.getText().replaceAll("\\s+","").toUpperCase();
+				String medID = sup_medID.getText().replaceAll("\\s+","");
+				String supuname = sup_uname.getText().replaceAll("\\s+","");
 				if(name.equals("") || mobile.equals("") || email.equals("") || medname.equals("") || medID.equals("") || supuname.equals(""))
 				{
 					JOptionPane.showMessageDialog(null, "Enter all the details");
@@ -262,10 +279,16 @@ public class supplierinfo extends JFrame {
 						  
 						try
 						{
-							
+							int flag=0;
 							Connection con = jdbc.getCon();
 							Statement st = con.createStatement();
-							st.executeQuery("select * from medicine where MedicineName = '"+medname+"'");
+							ResultSet rs = st.executeQuery("select * from medicine where MedicineName = '"+medname+"'");
+							while(rs.next())
+							{
+								flag=1;
+								JOptionPane.showMessageDialog(null, "This medicine already exists");
+							}
+							if(flag==0) {
 							String query="insert into suppliers (name,mobileNumber,email, MedicineName,MedicineID,SupplierUserName) values ('"+name+"','"+mobile+"','"+email+"','"+medname+"','"+medID+"','"+supuname.toLowerCase()+"');";
 							st.executeUpdate(query);
 							JOptionPane.showMessageDialog(null, "Supplier added successfully");
@@ -278,6 +301,7 @@ public class supplierinfo extends JFrame {
 							st.executeUpdate("insert into medicine (MedicineNAme, MedicineID, SupplierName,SupplierUsername)values('"+medname+"','"+medID+"','"+name+"','"+supuname+"')");
 							setVisible(false);
 							new adminoptions(username).setVisible(true);
+							}
 						}
 						catch(Exception e1)
 						{
@@ -295,6 +319,7 @@ public class supplierinfo extends JFrame {
 		panel1.add(btnNewButton);
 		
 		JLabel lblMedicineName = new JLabel("MEDICINE NAME");
+		lblMedicineName.setForeground(new Color(254, 250, 203));
 		lblMedicineName.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblMedicineName.setBounds(29, 310, 149, 25);
 		panel1.add(lblMedicineName);
@@ -305,16 +330,59 @@ public class supplierinfo extends JFrame {
 		panel1.add(sup_medname);
 		
 		JLabel lblMedicineId = new JLabel("MEDICINE ID");
+		lblMedicineId.setForeground(new Color(254, 250, 203));
 		lblMedicineId.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblMedicineId.setBounds(482, 211, 149, 25);
 		panel1.add(lblMedicineId);
 		
+		JLabel validmedid = new JLabel("");
+		validmedid.setBounds(881, 247, 91, 37);
+		panel1.add(validmedid);
+		
+		
 		sup_medID = new JTextField();
+		sup_medID.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				int checkuname;
+				String medid = sup_medID.getText();
+				if(!sup_medID.equals(""))
+				{
+					validmedid.setVisible(true);
+					validmedid.setIcon(new ImageIcon("src\\images\\yesicon.png"));
+        			validmedid.setText("");
+        			checkuname = 0;
+        			
+        			try
+        			{
+        				Connection con = jdbc.getCon();
+        				Statement st = con.createStatement();
+        				ResultSet rs = st.executeQuery("select * from medicine where MedicineID = '"+medid+"'");
+        				while(rs.next())
+        				{
+        					checkuname = 1;
+        					validmedid.setIcon(new ImageIcon("src\\images\\wrongicon.png"));
+        					validmedid.setText("");
+        				}
+        				
+        			}
+        			catch(Exception e1)
+        			{
+        				JOptionPane.showMessageDialog(null, e1);
+        			}
+				}
+				else
+				{
+					validmedid.setVisible(false);
+				}
+			}
+		});
 		sup_medID.setColumns(10);
 		sup_medID.setBounds(482, 247, 378, 37);
 		panel1.add(sup_medID);
 		
 		JButton btnBack = new JButton("BACK");
+		btnBack.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\backicon.png"));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
@@ -323,24 +391,20 @@ public class supplierinfo extends JFrame {
 		});
 		btnBack.setBounds(794, 14, 136, 50);
 		panel1.add(btnBack);
-		btnBack.setBackground(new Color(255, 255, 128));
+		btnBack.setBackground(new Color(222, 220, 133));
 		btnBack.setFont(new Font("Tahoma", Font.BOLD, 14));
-		
-		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\bg.png"));
-		lblNewLabel_1.setBounds(0, 0, 1045, 616);
-		panel1.add(lblNewLabel_1);
 		
 		
 		
 		
 		
 		JPanel panel3 = new JPanel();
-		panel3.setBackground(new Color(255, 255, 255));
+		panel3.setBackground(new Color(0,0,0,100));
 		tabbedPane.addTab("VIEW", null, panel3, null);
 		panel3.setLayout(null);
 		
 		JLabel lblViewSupplier = new JLabel("VIEW SUPPLIER");
+		lblViewSupplier.setForeground(new Color(254, 250, 203));
 		lblViewSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblViewSupplier.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblViewSupplier.setBounds(196, 11, 689, 64);
@@ -353,6 +417,7 @@ public class supplierinfo extends JFrame {
 		panel3.add(scrollPane);
 		
 		JButton btnNewButton_1_1 = new JButton("UPDATE");
+		btnNewButton_1_1.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\updated.png"));
 		btnNewButton_1_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -393,6 +458,7 @@ public class supplierinfo extends JFrame {
 		scrollPane.setViewportView(table1);
 		
 		JButton btnNewButton_3 = new JButton("ORDER BY SUPPLIERS");
+		btnNewButton_3.setBackground(new Color(254, 250, 203));
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try
@@ -415,10 +481,11 @@ public class supplierinfo extends JFrame {
 			}
 		});
 		btnNewButton_3.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButton_3.setBounds(214, 518, 192, 35);
+		btnNewButton_3.setBounds(210, 543, 192, 35);
 		panel3.add(btnNewButton_3);
 		
 		JButton btnNewButton_3_1 = new JButton("ORDER BY MEDICINES");
+		btnNewButton_3_1.setBackground(new Color(254, 250, 203));
 		btnNewButton_3_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try
@@ -441,33 +508,85 @@ public class supplierinfo extends JFrame {
 			}
 		});
 		btnNewButton_3_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButton_3_1.setBounds(621, 518, 192, 35);
+		btnNewButton_3_1.setBounds(609, 543, 192, 35);
 		panel3.add(btnNewButton_3_1);
 		
 		JButton btnBack_1 = new JButton("BACK");
+		btnBack_1.setBackground(new Color(254, 250, 203));
+		btnBack_1.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\backicon.png"));
 		btnBack_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new adminoptions(username).setVisible(true);
+				setVisible(false);
 			}
 		});
 		btnBack_1.setFont(new Font("Calibri Light", Font.BOLD, 15));
 		btnBack_1.setBounds(882, 26, 129, 49);
 		panel3.add(btnBack_1);
 		
+		JButton btnNewButton_3_2 = new JButton("DELETE");
+		btnNewButton_3_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int rep = JOptionPane.showConfirmDialog(null, "Do you want to delete?");
+				if(rep==JOptionPane.YES_OPTION)
+				{
+				DefaultTableModel dt = (DefaultTableModel)table1.getModel();
+				int row = table1.getSelectedRow();
+				Connection con;
+				try {
+					int flag = 0;
+					con = jdbc.getCon();
+					Statement st = con.createStatement();
+					ResultSet rs = st.executeQuery("select * from medicine where MedicineName='"+table1.getValueAt(row, 3)+"';");
+					while(rs.next())
+					{
+						if(Integer.parseInt(rs.getString("Quantity").toString())<=0)
+						{
+							flag = 1;
+						}
+					}
+					if(flag==1)
+					{
+					con = jdbc.getCon();
+					st = con.createStatement();
+					st.executeUpdate("delete from suppliers where MedicineName='"+table1.getValueAt(row, 3)+"';");
+					st.executeUpdate("delete from medicine where MedicineName='"+table1.getValueAt(row, 3)+"';");
+					dt.removeRow(row);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Cannot delete. Medicines are not sold");
+					}
+				}
+					catch(Exception e1)
+					{
+						JOptionPane.showMessageDialog(null, e1);
+					}
+			}
+			
+		}});
+		btnNewButton_3_2.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnNewButton_3_2.setBackground(new Color(254, 250, 203));
+		btnNewButton_3_2.setBounds(436, 510, 134, 35);
+		panel3.add(btnNewButton_3_2);
+		
 		JPanel panel2 = new JPanel();
 		tabbedPane.addTab("EDIT", null, panel2, null);
+		panel2.setBackground(new Color(0,0,0,100));
 		panel2.setLayout(null);
 		
 		JLabel lblEditSupplier = new JLabel("EDIT SUPPLIER");
+		lblEditSupplier.setForeground(new Color(254, 250, 203));
 		lblEditSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEditSupplier.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblEditSupplier.setBounds(135, 24, 689, 64);
+		lblEditSupplier.setBounds(153, 6, 689, 64);
 		panel2.add(lblEditSupplier);
 		
-		JLabel name = new JLabel("Name");
-		name.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel name = new JLabel("NAME");
+		name.setForeground(new Color(254, 250, 203));
+		name.setHorizontalAlignment(SwingConstants.RIGHT);
 		name.setFont(new Font("Sitka Text", Font.BOLD, 14));
-		name.setBounds(58, 235, 131, 39);
+		name.setBounds(96, 235, 131, 39);
 		panel2.add(name);
 		
 		supname = new JTextField();
@@ -475,10 +594,11 @@ public class supplierinfo extends JFrame {
 		supname.setBounds(265, 229, 201, 46);
 		panel2.add(supname);
 		
-		JLabel supMobilenumber = new JLabel("MobileNumber");
-		supMobilenumber.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel supMobilenumber = new JLabel("MOBILE NUMBER");
+		supMobilenumber.setForeground(new Color(254, 250, 203));
+		supMobilenumber.setHorizontalAlignment(SwingConstants.RIGHT);
 		supMobilenumber.setFont(new Font("Sitka Text", Font.BOLD, 14));
-		supMobilenumber.setBounds(58, 325, 131, 39);
+		supMobilenumber.setBounds(96, 325, 131, 39);
 		panel2.add(supMobilenumber);
 		
 		supmobile = new JTextField();
@@ -486,10 +606,11 @@ public class supplierinfo extends JFrame {
 		supmobile.setBounds(265, 319, 201, 46);
 		panel2.add(supmobile);
 		
-		JLabel supMedicineName_1 = new JLabel("Medicine name");
-		supMedicineName_1.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel supMedicineName_1 = new JLabel("MEDICINE NAME");
+		supMedicineName_1.setForeground(new Color(254, 250, 203));
+		supMedicineName_1.setHorizontalAlignment(SwingConstants.RIGHT);
 		supMedicineName_1.setFont(new Font("Sitka Text", Font.BOLD, 14));
-		supMedicineName_1.setBounds(571, 235, 131, 39);
+		supMedicineName_1.setBounds(618, 235, 131, 39);
 		panel2.add(supMedicineName_1);
 		
 		supmedname = new JTextField();
@@ -497,10 +618,11 @@ public class supplierinfo extends JFrame {
 		supmedname.setBounds(789, 229, 201, 46);
 		panel2.add(supmedname);
 		
-		JLabel lblEmail = new JLabel("Email");
-		lblEmail.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel lblEmail = new JLabel("EMAIL");
+		lblEmail.setForeground(new Color(254, 250, 203));
+		lblEmail.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblEmail.setFont(new Font("Sitka Text", Font.BOLD, 14));
-		lblEmail.setBounds(82, 405, 131, 39);
+		lblEmail.setBounds(96, 405, 131, 39);
 		panel2.add(lblEmail);
 		
 		supemail = new JTextField();
@@ -508,21 +630,40 @@ public class supplierinfo extends JFrame {
 		supemail.setBounds(265, 399, 201, 46);
 		panel2.add(supemail);
 		
-		supunamesearchtext = new JTextField();
-		supunamesearchtext.setBounds(217, 99, 410, 46);
+		JComboBox supunamesearchtext = new JComboBox();
+		supunamesearchtext.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		supunamesearchtext.setModel(new DefaultComboBoxModel(new String[] {"select"}));
+		supunamesearchtext.setBounds(333, 97, 260, 41);
+		try 
+		{	
+			Connection con = jdbc.getCon();
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select distinct SupplierUserName from suppliers");
+			while(rs.next())
+			{
+				supunamesearchtext.addItem(rs.getString(1));
+			}
+		} 
+		catch (Exception e) {
+			
+		}
 		panel2.add(supunamesearchtext);
-		supunamesearchtext.setColumns(10);
 		
 		JButton searchbtn = new JButton("Search");
+		searchbtn.setBackground(new Color(254, 250, 203));
 		
 		JButton btnNewButton_2 = new JButton("UPDATE");
+		btnNewButton_2.setBackground(new Color(254, 250, 203));
+		btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\SAVEICON.png"));
 		
 		searchbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!supunamesearchtext.getText().equals(""))
+				DefaultTableModel dt = (DefaultTableModel)table.getModel();
+				dt.setRowCount(0);
+				if(!supunamesearchtext.getSelectedItem().toString().equals("select"))
 				{
 					int supplierexist = 0;
-					String supuname = supunamesearchtext.getText();
+					String supuname = supunamesearchtext.getSelectedItem().toString();
 					try
 					{
 						Connection con = jdbc.getCon();
@@ -534,8 +675,13 @@ public class supplierinfo extends JFrame {
 							supname.setText(rs.getString(1));
 							supmobile.setText(rs.getString(2));
 							supemail.setText(rs.getString(3));
-							supmedname.setText(rs.getString(4));
 							
+							Statement st1 = con.createStatement();
+							ResultSet rs1 = st1.executeQuery("select * from medicine where SupplierUserName='"+supuname+"';");
+							while(rs1.next())
+							{
+								dt.addRow(new Object[] {rs1.getString(1),rs1.getString(2),rs1.getString(3)});
+							}
 						}
 					}
 					catch(Exception e1)
@@ -568,9 +714,11 @@ public class supplierinfo extends JFrame {
 				String suppname = supname.getText();
 				String suppmob = supmobile.getText();
 				String suppemail = supemail.getText();
-				String suppmedname = supmedname.getText();
-				String supuname = supunamesearchtext.getText();
-				if(!suppname.equals("") && !suppmob.equals("") && !suppemail.equals("") && !suppmedname.equals(""))
+				
+				DefaultTableModel dt = (DefaultTableModel)table.getModel();
+				
+				String supuname = supunamesearchtext.getSelectedItem().toString();
+				if(!suppname.equals("") && !suppmob.equals("") && !suppemail.equals(""))
 				{
 				if(!suppmob.matches(mobilePattern) || suppmob.length() != 10)
 				{
@@ -586,12 +734,8 @@ public class supplierinfo extends JFrame {
 					{
 						Connection con = jdbc.getCon();
 						Statement st = con.createStatement();
-						ResultSet rs = st.executeQuery("select * from suppliers where (MedicineName = '"+suppmedname+"') and (SupplierUserName <> '"+supuname+"');");
-						if(rs.next())
-						{
-							JOptionPane.showMessageDialog(null, "Medicine already exists");
-						}
-						 rs = st.executeQuery("select * from suppliers where (mobileNumber = '"+suppmob+"') and (SupplierUserName <> '"+supuname+"');");
+						
+						 ResultSet rs = st.executeQuery("select * from suppliers where (mobileNumber = '"+suppmob+"') and (SupplierUserName <> '"+supuname+"');");
 						 if(rs.next())
 						{
 							JOptionPane.showMessageDialog(null, "User with this mobile number already exists");
@@ -603,13 +747,13 @@ public class supplierinfo extends JFrame {
 						}
 						else
 						{
-						st.executeUpdate("update suppliers set name = '"+suppname+"',mobileNumber = '"+suppmob+"',email = '"+suppemail+"',MedicineName = '"+suppmedname+"' where SupplierUserName = '"+supuname+"';");
+						st.executeUpdate("update suppliers set name = '"+suppname+"',mobileNumber = '"+suppmob+"',email = '"+suppemail+"' where SupplierUserName = '"+supuname+"';");
 						JOptionPane.showMessageDialog(null, "Supplier has been updated successfully");
 						supname.setText("");
 						supmobile.setText("");
 						supemail.setText("");
-						supmedname.setText("");
 						
+						dt.setRowCount(0);
 						}
 					}
 					catch(Exception e1)
@@ -625,13 +769,16 @@ public class supplierinfo extends JFrame {
 			}
 		});
 		btnNewButton_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnNewButton_2.setBounds(444, 477, 149, 39);
+		btnNewButton_2.setBounds(439, 561, 149, 39);
 		panel2.add(btnNewButton_2);
 		
 		JButton btnBack_2 = new JButton("BACK");
+		btnBack_2.setBackground(new Color(254, 250, 203));
+		btnBack_2.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\backicon.png"));
 		btnBack_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new adminoptions(username).setVisible(true);
+				setVisible(false);
 			}
 		});
 		btnBack_2.setFont(new Font("Calibri Light", Font.BOLD, 15));
@@ -639,9 +786,80 @@ public class supplierinfo extends JFrame {
 		panel2.add(btnBack_2);
 		
 		JLabel lblNewLabel = new JLabel("USERNAME");
+		lblNewLabel.setForeground(new Color(254, 250, 203));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel.setBounds(47, 105, 142, 30);
+		lblNewLabel.setBounds(181, 101, 142, 30);
 		panel2.add(lblNewLabel);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(618, 300, 362, 155);
+		panel2.add(scrollPane_1);
+		
+		table = new JTable();
+		
+		scrollPane_1.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Medicine", "Medicine ID", "Quantity"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		
+		JButton btnNewButton_4 = new JButton("DELETE");
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultTableModel dt = (DefaultTableModel)table.getModel();
+				int row = table.getSelectedRow();
+				int resp = JOptionPane.showConfirmDialog(null, "Do you want to delete");
+				if(resp==JOptionPane.YES_OPTION)
+				{
+				if(Integer.valueOf(dt.getValueAt(row, 2).toString())<=0)
+				{
+					try
+					{
+						Connection con = jdbc.getCon();
+						Statement st = con.createStatement();
+						int flag=0;
+						
+						st.executeUpdate("delete from suppliers where MedicineID='"+table.getValueAt(row, 1)+"';");
+						st.executeUpdate("delete from medicine where MedicineID='"+table.getValueAt(row, 1)+"';");
+						JOptionPane.showMessageDialog(null, "Medicine deleted successfully");
+						dt.removeRow(row);
+						
+					}
+					catch(Exception e1)
+					{
+						JOptionPane.showMessageDialog(null, e1);
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Medicine is in stock. Cannot be deleted");
+				}
+				}
+			}
+		});
+		btnNewButton_4.setFont(new Font("Tahoma", Font.BOLD, 13));
+		btnNewButton_4.setBounds(745, 486, 119, 30);
+		panel2.add(btnNewButton_4);
+		table.getColumnModel().getColumn(0).setPreferredWidth(105);
+		table.getColumnModel().getColumn(0).setMinWidth(105);
+		
+		
+		
+		JLabel lblNewLabel_1 = new JLabel("");
+		lblNewLabel_1.setIcon(new ImageIcon(supplierinfo.class.getResource("/images/Reporting on our Progress and ilestones (4).jpg")));
+		lblNewLabel_1.setBounds(0, 0, 1283, 650);
+		contentPane.add(lblNewLabel_1);
+		
 	}
 }
