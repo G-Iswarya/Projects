@@ -128,48 +128,45 @@ public class entryform extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String uname=usernamefield.getText();
 				String pword=passwordField.getText();
-				if(usernamefield.getText().replaceAll("\\s+","").equals("admin") && passwordField.getText().replaceAll("\\s+","").equals("admin"))
-				{
-					setVisible(false);
-					new adminoptions(uname).setVisible(true);
-				}
-				else
-				{
 				try
 				{
 					Connection con = jdbc.getCon();
 					Statement st = con.createStatement();
 					String query = "select * from pharma where username='"+uname+"'";
 					ResultSet rs = st.executeQuery(query);
-					int reg = 0;
-					while(rs.next())
+					if(rs.next()) {
+					if(usernamefield.getText().replaceAll("\\s+","").equals("admin"))
 					{
-						if(rs.getString("username").equals(uname))
-						{ reg=1;
-							if(rs.getString("password").equals(pword))
-							{
-								JOptionPane.showMessageDialog(null, "Login Successful");
-								reg = 2;
-								setVisible(false);
-								new pharmaoptions(uname).setVisible(true);
-							}
-							else
-							{
-								JOptionPane.showMessageDialog(null, "Incorrect Password");
-							}
+						if(passwordField.getText().replaceAll("\\s+","").equals(rs.getString("password")))
+						setVisible(false);
+						new adminoptions(uname).setVisible(true);
+					}
+					else
+					{ int reg=0;
+							if(rs.getString("username").equals(uname))
+							{ reg=1;
+								if(rs.getString("password").equals(pword))
+								{
+									JOptionPane.showMessageDialog(null, "Login Successful");
+									reg = 2;
+									setVisible(false);
+									new pharmaoptions(uname).setVisible(true);
+								}
+								else
+								{
+									JOptionPane.showMessageDialog(null, "Incorrect Password");
+								}
 						}
-					}
-					if(reg == 0)
-					{
-						JOptionPane.showMessageDialog(null, "User not registered. Request admin to register new pharmacist");
-					}
-				}
+						if(reg == 0)
+						{
+							JOptionPane.showMessageDialog(null, "User not registered. Request admin to register new pharmacist");
+						}
+					}}}
+					
 				catch(Exception e1)
 				{
 					JOptionPane.showMessageDialog(null, e1);
 				}
-				}
-
 			}
 		});
 		btnNewButton.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\login.png"));

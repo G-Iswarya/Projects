@@ -7,6 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import db.jdbc;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
@@ -19,6 +22,9 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class pharmaoptions extends JFrame {
 
@@ -124,18 +130,33 @@ public class pharmaoptions extends JFrame {
 			      int result = JOptionPane.showOptionDialog(null, new Object[] {message, userField, passField},"Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 			      if(result == 0)
 			      {
-			    	  if(userField.getText().equals("admin") && passField.getText().equals("admin"))
+			    	  try
+						{
+							Connection con = jdbc.getCon();
+							Statement st = con.createStatement();
+							String query = "select * from pharma where username= 'admin';";
+							ResultSet rs = st.executeQuery(query);
+							if(rs.next()) {
+							if(userField.getText().replaceAll("\\s+","").equals("admin") && passField.getText().replaceAll("\\s+","").equals(rs.getString("password")))
+							{
+								setVisible(false);
+								new changePwd(username).setVisible(true);
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Incorrect credentials");
+							}}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Incorrect credentials");
+							}
+						}	
+			    	  catch(Exception e1)
 			    	  {
-			    		  setVisible(false);
-			    		  new changePwd(username).setVisible(true);
+			    		 JOptionPane.showMessageDialog(null, e1);
 			    	  }
-			    	  else
-			    	  {
-			    		  JOptionPane.showMessageDialog(null, "Incorrect credentials");
-			    	  }
-			      }
 				
-			}
+			}}
 		});
 		btnChangePassword.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnChangePassword.setBounds(49, 340, 252, 96);

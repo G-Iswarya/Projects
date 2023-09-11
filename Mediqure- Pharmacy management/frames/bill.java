@@ -58,7 +58,7 @@ public class bill extends JFrame {
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(308, 175, 776, 376);
+		scrollPane.setBounds(80, 175, 776, 376);
 		contentPane.add(scrollPane);
 		
 		billtable = new JTable();
@@ -145,6 +145,11 @@ public class bill extends JFrame {
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 28));
 		lblNewLabel_3.setBounds(515, 11, 281, 54);
 		contentPane.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("");
+		lblNewLabel_4.setIcon(new ImageIcon("C:\\Users\\iswarya.g\\Downloads\\vendor.png"));
+		lblNewLabel_4.setBounds(866, 216, 349, 335);
+		contentPane.add(lblNewLabel_4);
 		
 		DefaultTableModel model = (DefaultTableModel) billtable.getModel();
 		model.setRowCount(0);
