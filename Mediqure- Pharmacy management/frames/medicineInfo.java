@@ -311,6 +311,10 @@ public class medicineInfo extends JFrame {
 		scrollPane.setViewportView(table);
 		
 		JButton btnNewButton_1_2 = new JButton("DELETE");
+		if(!username.equals("admin"))
+		{
+			btnNewButton_1_2.setEnabled(false);
+		}
 		btnNewButton_1_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int rep = JOptionPane.showConfirmDialog(null, "Do you want to delete?");

@@ -138,8 +138,14 @@ public class entryform extends JFrame {
 					if(usernamefield.getText().replaceAll("\\s+","").equals("admin"))
 					{
 						if(passwordField.getText().replaceAll("\\s+","").equals(rs.getString("password")))
+						{
 						setVisible(false);
 						new adminoptions(uname).setVisible(true);
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Incorrect password");
+						}
 					}
 					else
 					{ int reg=0;
